@@ -22,7 +22,7 @@ app.use(
 
 app.use(
   session({
-    secret: process.env.CLIENT_SECRET || "our little secret",
+    secret: "our little secret",
     resave: false,
     saveUninitialized: true,
   })
@@ -33,7 +33,7 @@ app.use(passport.session());
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/userDB",
-  { useNewUrlParser: true, useUnifiedTopology: true }
+  { useNewUrlParser: true }
 );
 
 const userSchema = new mongoose.Schema({
