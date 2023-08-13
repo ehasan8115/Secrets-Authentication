@@ -22,7 +22,7 @@ app.use(
 
 app.use(
   session({
-    secret: "our little secret",
+    secret: process.env.CLIENT_SECRET || "our little secret",
     resave: false,
     saveUninitialized: true,
   })
@@ -31,7 +31,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://127.0.0.1:27017/userDB", { useNewUrlParser: true });
+mongoose.connect(
+  process.env.MONGODB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/userDB",
+  { useNewUrlParser: true, useUnifiedTopology: true }
+);
 
 const userSchema = new mongoose.Schema({
   email: String,
@@ -190,6 +193,6 @@ app.post("/login", function (req, res) {
   });
 });
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
   console.log("Server started on port 3000.");
 });
