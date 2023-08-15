@@ -1,18 +1,17 @@
 # Secrets-Authentication
 
+### [Live Site](https://secrets-app-9ox9.onrender.com/)
+
 SecretKeeper is a web application that allows users to share secrets anonymously. Users can register or log in using their Google account or local credentials and submit their secrets. The submitted secrets are displayed on the "Secrets" page, allowing users to discover and explore various secrets shared by others.
 
-![SecretKeeper](link_to_screenshot_or_image)
+![SecretKeeper](https://github.com/ehasan8115/Secrets-Authentication/blob/master/public/images/secrets-home.png?raw=true)
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
 - [Features](#features)
-- - [Technology Used](#technology-used)
-- [Installation](#installation)
+- [Technology Used](#technology-used)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Project Overview
 
@@ -54,14 +53,11 @@ The SecretKeeper web application provides a platform for users to anonymously sh
   - Google OAuth 2.0: Enabling Google account authentication.
 
 - **Deployment**:
-  - Heroku: Cloud platform used for deploying and hosting the web application.
+  - Render: Cloud platform used for deploying and hosting the web application.
 
-## Installation
+## Usage
 
-To run the SecretKeeper web application locally, follow these steps:
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your-username/secretkeeper.git
-   cd secretkeeper
+- Register or log in using your Google account or local credentials.
+- Submit your secrets on the "Submit a Secret" page.
+- Explore secrets shared by other users on the "Secrets" page.
+- Log out when you're done by clicking the "Log Out" button.
