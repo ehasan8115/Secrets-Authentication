@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   googleId: String,
-  secret: String,
+  secret: Array,
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -52,7 +52,7 @@ passport.use(User.createStrategy());
 
 passport.serializeUser(function (user, cb) {
   process.nextTick(function () {
-    cb(null, { id: user.id, username: user.username, name: user.name });
+    cb(null, { id: user.id, username: user.username });
   });
 });
 
@@ -68,13 +68,27 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
       callbackURL: process.env.AUTH_URL,
-      // userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
-    function (accessToken, refreshToken, profile, cb) {
-      // console.log(profile);
-      User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        return cb(err, user);
-      });
+    async function (accessToken, refreshToken, profile, done) {
+      try {
+        // Find or create user in your database
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+          // Create new user in database
+          const username =
+            Array.isArray(profile.emails) && profile.emails.length > 0
+              ? profile.emails[0].value.split("@")[0]
+              : "";
+          const newUser = new User({
+            username: profile.displayName,
+            googleId: profile.id,
+          });
+          user = await newUser.save();
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err);
+      }
     }
   )
 );
@@ -117,7 +131,7 @@ app.get("/secrets", function (req, res) {
     });
 });
 
-app.get("/submit", function (req, res) {
+app.get("/submit", (req, res) => {
   if (req.isAuthenticated()) {
     res.render("submit");
   } else {
@@ -125,50 +139,37 @@ app.get("/submit", function (req, res) {
   }
 });
 
-app.post("/submit", function (req, res) {
-  const submittedSecret = req.body.secret;
-
-  // Ensure the user is authenticated
-  if (!req.isAuthenticated()) {
-    res.redirect("/login");
-    return;
-  }
-
-  User.findById(req.user.id)
-    .then((foundUser) => {
-      if (foundUser) {
-        foundUser.secret = submittedSecret;
-        return foundUser.save();
-      }
-    })
+app.post("/submit", (req, res) => {
+  User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $push: { secret: req.body.secret } }
+  )
     .then(() => {
       res.redirect("/secrets");
     })
     .catch((err) => {
       console.log(err);
-      // Handle errors as needed
     });
 });
 
-app.get("/logout", function (req, res, next) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) console.log(err);
   });
+  res.redirect("/");
 });
 
-app.post("/register", function (req, res) {
+app.post("/register", (req, res) => {
   User.register(
     { username: req.body.username },
     req.body.password,
-    function (err, user) {
+    (err, user) => {
       if (err) {
         console.log(err);
         res.redirect("/register");
       } else {
-        passport.authenticate("local")(req, res, function () {
+        passport.authenticate("local")(req, res, () => {
+          //user authenticated successfully
           res.redirect("/secrets");
         });
       }
@@ -176,17 +177,17 @@ app.post("/register", function (req, res) {
   );
 });
 
-app.post("/login", function (req, res) {
+app.post("/login", (req, res) => {
   const user = new User({
     username: req.body.username,
     password: req.body.password,
   });
 
-  req.login(user, function (err) {
-    if (err) {
-      console.log(err);
-    } else {
-      passport.authenticate("local")(req, res, function () {
+  req.login(user, (err) => {
+    if (err) console.log(err);
+    else {
+      passport.authenticate("local")(req, res, () => {
+        //user authenticated successfully
         res.redirect("/secrets");
       });
     }
