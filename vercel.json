@@ -1,6 +1,3 @@
 {
-  "version": 2,
-  "name": "secrets-app",
-  "builds": [{ "src": "*.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/" }]
+  "rewrites": [{ "source": "./app.js", "destination": "/" }]
 }
