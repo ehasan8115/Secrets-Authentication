@@ -2,8 +2,6 @@
 
 ### [Live Site](https://secrets-app-9ox9.onrender.com/)
 
-SecretKeeper is a web application that allows users to share secrets anonymously. Users can register or log in using their Google account or local credentials and submit their secrets. The submitted secrets are displayed on the "Secrets" page, allowing users to discover and explore various secrets shared by others.
-
 ![SecretKeeper](https://github.com/ehasan8115/Secrets-Authentication/blob/master/public/images/secrets-home.png?raw=true)
 
 ## Table of Contents
